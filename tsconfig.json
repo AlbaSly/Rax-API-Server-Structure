@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2016",
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "paths": {
+      "@core/*": ["core/*"],
+      "@environments/*": ["environments/*"],
+      "@modules/*": ["modules/*"],
+      "@server/*": ["server/*"],
+    },
+    "esModuleInterop": true,
+    "strictPropertyInitialization": false,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+  },
+}
