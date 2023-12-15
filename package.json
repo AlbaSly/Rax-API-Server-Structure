@@ -1,5 +1,5 @@
 {
-  "name": "rax-apiserver-layout",
+  "name": "rax-api-server-structure",
   "version": "0.0.1",
   "description": "API Server Structure for Medium/Large Express-Based Projects.",
   "main": ".dist/index.js",
