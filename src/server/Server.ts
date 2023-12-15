@@ -65,7 +65,7 @@ export class Server {
     ApiLog.verbose(SERVICE_NAME, 'Establishing the connection to the database(s)...');
     return new Promise(async (resolve, reject) => {
       try {
-        // await DatabasesModule.Main.connect();
+        //await DatabasesModule.Main.connect();
 
         ApiLog.verbose(SERVICE_NAME, 'Databases are ready for use.');
         resolve();        
