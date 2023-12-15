@@ -3,10 +3,11 @@ import express, { Application } from "express";
 import { ServerEnvironments } from "@environments/index";
 
 import { DatabasesModule } from "@core/databases";
-import { ApiLog } from "@core/utils";
+import { ApiLog, FormatUtils } from "@core/utils";
 import { RoutingManager } from "@core/routes/RoutingManager";
 
 import { SERVER_MIDDLEWARES } from "@server/middlewares";
+import { API_DATETIME_FORMAT } from "@core/constants";
 
 /**
  * Main Class for running the Web Server
@@ -64,7 +65,7 @@ export class Server {
     ApiLog.verbose(SERVICE_NAME, 'Establishing the connection to the database(s)...');
     return new Promise(async (resolve, reject) => {
       try {
-        await DatabasesModule.Main.connect();
+        // await DatabasesModule.Main.connect();
 
         ApiLog.verbose(SERVICE_NAME, 'Databases are ready for use.');
         resolve();        
@@ -94,17 +95,65 @@ export class Server {
   /**
    * Run the server
    */
-  private run(): void {
+  private run() {
+    const name = ServerEnvironments.name;
     const port = ServerEnvironments.port;
     const host = ServerEnvironments.host;
 
-    this.app.listen(port, host, () => {
-      this.timeEnd = Date.now();
-      ApiLog.info(SERVICE_NAME, 'Server running in ' + host + ":" + port);
-      ApiLog.verbose(SERVICE_NAME, (this.timeEnd - this.timeStart) + 'ms');
+    return new Promise<void>((resolve, reject) => {
+      try {
+        this.app.listen(port, host, () => {
+          this.timeEnd = Date.now();
+          
+          let info = {
+            'Web Service': new ServerInfo(
+              name, 
+              host, 
+              port, 
+              ServerEnvironments.environment, 
+              FormatUtils.FormatDateTime(new Date(), API_DATETIME_FORMAT)
+            ),
+          }
+
+          ApiLog.info(SERVICE_NAME, 'Server running in ' + host + ":" + port);
+          console.log('\n');
+          ApiLog.info(SERVICE_NAME, 'Info:');
+          console.table(info);
+          console.log('\n');
+
+          ApiLog.verbose(SERVICE_NAME, (this.timeEnd - this.timeStart) + 'ms');
+
+          resolve();
+        });
+      } catch (error) {
+        ApiLog.error(SERVICE_NAME, 'There\'s an error running Web Service', error);
+        reject(error);
+      }
     });
   }
 }
 
 const SERVICE_NAME: string = "WebService";
-const ERROR_MESSAGE: string = "An error has been occurred starting the Web Service";
+
+class ServerInfo {
+
+  'Name': string;
+  'Host': string;
+  'Port': number;
+  'Environment': string;
+  'Start-up Date': string;
+
+  constructor(
+    name: string,
+    host: string,
+    port: number,
+    environment: string,
+    startupDate: string,
+  ) {
+    this.Name = name;
+    this.Host = host;
+    this.Port = port;
+    this.Environment = environment;
+    this["Start-up Date"] = startupDate;
+  }
+}

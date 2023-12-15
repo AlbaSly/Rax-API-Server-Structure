@@ -21,6 +21,7 @@ I will explain all the steps you need to setup up the web server.
 
 In the ``.env.template`` file there are some values that you must put in the ```.env``` file.
 
+- **WEB_SERVICE_NAME**: Desired name for your Web Service.
 - **PORT**: The server port to up the Web Service.
 - **HOST**: The server address to up the Web Service.
 
@@ -50,6 +51,9 @@ For this, you must modify the following values in the ```.env``` file:
 #### JWT Settings (optional)
 
 Related to the authentication process, you may handle the user data by JSON Web Tokens. In this backend structure, you can handle JWTs with the ```JWTService``` _(src/core/services/```jwt.service.ts```)_
+
+- **JWT_SECRET**: JWT secret password.
+- **JWT_EXPIRATION**: JWT expiration time.
 
 ### 2. Docker Compose File For Database (Optional)
 
