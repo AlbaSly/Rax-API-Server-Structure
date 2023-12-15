@@ -6,11 +6,15 @@ import dotenv from "dotenv";
  */
 class Environment {
 
+  environment: string;
+
   /**
    * Singleton
    */
   private static _instance: Environment | null = null;
- 
+
+  /**Web Service name */
+  name: string;
   /**Express port */
   port: number;
   /**Express host */
@@ -24,6 +28,9 @@ class Environment {
   
   private constructor() {
     dotenv.config();
+
+    this.name = process.env.WEB_SERVICE_NAME || "Hello World to my BACKEND STRUCTURE!";
+    this.environment = process.env.ENVIRONMENT || "DEVELOPMENT";
 
     this.port = parseInt(process.env.PORT!) || 3000;
     this.host = process.env.HOST || "0.0.0.0";
