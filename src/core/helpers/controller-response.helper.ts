@@ -18,8 +18,7 @@ export namespace ControllerResponseHelpers {
    */
   export const handleResponse = <T>(
     responseData: IResolve<T>,
-    res: Response,
-    next?: NextFunction
+    res: Response
   ) => {
     const _response = responseData as IResolve<T>;
     return res.status(_response.status).json(_response);
