@@ -8,7 +8,6 @@ import { ApiLog, FormatUtils } from "@core/utils";
 import { RoutingManager } from "@core/routes/RoutingManager";
 
 import { SERVER_MIDDLEWARES } from "@server/middlewares";
-import { MainDB } from "@core/databases";
 
 
 /**
@@ -78,8 +77,9 @@ export class Server {
     ApiLog.verbose(SERVICE_NAME, 'Establishing the connection to the database(s)...');
     return new Promise(async (resolve, reject) => {
       try {
-        // Uncoment the line below for connecting to the Main database (check in databases/main at the core folder)
-        // await MainDB.connect();
+        const databases = await import('@core/databases');
+        // Uncomment the line below for connecting to the Main database (check in databases/main at the core folder)
+        // await databases.MainDB.connect(); 
 
         ApiLog.info(SERVICE_NAME, 'Databases are ready for use.');
         resolve();        
