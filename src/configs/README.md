@@ -104,26 +104,34 @@ export class MyConfigurations extends ConfigurationsLoader {
 }
 ```
 
-2. **Call the _```loadEnvironmentVars()```_ method in the ```Server``` class _(src/Server.ts)_**
+2. **Call the _```loadEnvironmentVars()```_ method in the ```Bootstrap``` class _(src/Bootstrap.ts)_**
 
-Search for the _```loadConfigurations()```_ method:
+Search for the _```getConfigurations()```_ method:
 
 ```ts
-//Server.ts
+//Bootstrap.ts
 
 /**
- * Loads all configurations, including web service and database configurations.
+ * Loads configurations from the definitions module.
  */
-private loadConfigurations(): void {
-  ApiLog.verbose(SERVICE_NAME, 'Resolving configurations...');
+private getConfigurations() {
+  return new Promise<void>(async (resolve, reject) => {
+    ApiLog.verbose('Bootstrap', 'Loading configurations...');
+    try {
+      const configurations = await import("@configs/definitions");
 
-  WebServiceConfigurations.getInstance().loadEnvironmentVars();
-  DatabasesConfigurations.getInstance().loadEnvironmentVars();
+      configurations.WebServiceConfigurations.getInstance().loadEnvironmentVars();
+      configurations.DatabasesConfigurations.getInstance().loadEnvironmentVars();
 
-  //Your own configuration class
-  MyConfigurations.getInstance().loadEnvironmentVars();
+      //Your own configuration class
+      MyConfigurations.getInstance().loadEnvironmentVars();
 
-  ApiLog.info(SERVICE_NAME, 'Configurations are set.');
+      ApiLog.info('Bootstrap', 'Configurations are set.\n');
+      resolve();
+    } catch (error) {
+      ApiLog.error('Bootstrap', 'There\'s an error loading the configurations.', error);
+    }
+  });
 }
 ```
 With this, you will be able to use your environment variables anywhere in your application.
@@ -153,3 +161,7 @@ export * from "./my-implementation.config.ts";
 ```
 
 Also, make sure your environments variables exist inside the ```.env``` file.
+
+## IMPORTANT
+
+Always load your implementations in ```Bootstrap.ts``` as I said previously. Otherwise, you may expect errors during Runtime.

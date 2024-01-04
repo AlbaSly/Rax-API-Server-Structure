@@ -30,17 +30,15 @@ export class Server {
    */
   constructor() {
     this.timeStart = Date.now();
-    this.createApp();
+    this.createWebService();
   }
 
   /**
    * Creates the express app (Web Server), connects to the database, and executes all configurations.
    */
-  private createApp(): void {
+  private createWebService(): void {
     this.app = express();
     ApiLog.verbose(SERVICE_NAME, 'Express app created.');
-
-    this.loadConfigurations();
 
     (async () => {
       try {
@@ -58,18 +56,6 @@ export class Server {
   }
 
   /**
-   * Loads all configurations, including web service and database configurations.
-   */
-  private loadConfigurations(): void {
-    ApiLog.verbose(SERVICE_NAME, 'Resolving configurations...');
-
-    WebServiceConfigurations.getInstance().loadEnvironmentVars();
-    DatabasesConfigurations.getInstance().loadEnvironmentVars();
-
-    ApiLog.info(SERVICE_NAME, 'Configurations are set.');
-  }
-
-  /**
    * Establishes a connection to the database(s).
    * @returns A Promise that resolves when the connection is successfully established and rejects on failure.
    */
@@ -77,6 +63,7 @@ export class Server {
     ApiLog.verbose(SERVICE_NAME, 'Establishing the connection to the database(s)...');
     return new Promise(async (resolve, reject) => {
       try {
+        //Dynamic import, from here you will load all your databases.
         const databases = await import('@core/databases');
         // Uncomment the line below for connecting to the Main database (check in databases/main at the core folder)
         // await databases.MainDB.connect(); 
