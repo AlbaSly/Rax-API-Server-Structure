@@ -1,6 +1,6 @@
 # Core Folder
 
-This folder is for the server core structure for handle a REST API application
+This folder is intended for the server core structure to handle a REST API application.
 
 ```shell
 .
@@ -8,21 +8,16 @@ This folder is for the server core structure for handle a REST API application
     ├── classes/
     │   ├── index.ts
     │   └── ServerError.ts
-    ├── config/
-    │   ├── index.ts
-    │   ├── databases.config.ts
-    │   ├── email.config.ts
-    │   └── jwt.config.ts
     ├── constants/
     │   └── index.ts
     ├── controllers/
     │   └── index.ts
     ├── databases/
     │   ├── engines/
-    │   │   ├── MongoDBConnection.ts
+    │   │   ├── index.ts
     │   │   └── PostgresDBConnection.ts
     │   ├── main/
-    │   │   └── MainDatabase.ts
+    │   │   └── main-db.ts
     │   └── index.ts
     ├── enums/
     │   ├── index.ts
@@ -56,11 +51,6 @@ This folder is for the server core structure for handle a REST API application
 ## classes
 For classes related to something in specific, like Socket structures, Error Hanlers, etc.
 
-## config
-This folder is primarily for organizing in a concise manner the configurations that will be injected into classes, services, etc.
-
-I provided configurations for the JWT service, Nodemailer, and all the connections for the databases you manage.
-
 ## constants
 A folder whose function is to store constants that are used globally within the entire logic of the application.
 
@@ -70,7 +60,7 @@ As its name implies, it is meant to organize all the general controllers of the 
 ## databases
 In this particular section, we can handle multiple databases with different database engines, having a folder called engines. Here, you can have specific classes or functions for instantiating databases.
 
-For this template, I provided a PostgreSQL class for creating connections (```PostgresDBConnection.ts```), and a object instance as the main database, where you only need to modify the environment variables mentioned in the ```README.md``` file at the project's root to have a connection to your PostgreSQL database. Additionally, it will serve as an example to create more instances with different connections.
+For this template, I've provided a PostgreSQL class for creating connections (```PostgresDBConnection.ts```), and an object instance as the main database, where you only need to modify the environment variables according to the ```README.md``` file _(src/configs/```README.md```)_ to have a connection to your PostgreSQL database. Additionally, it will serve as an example to create more instances with different connections.
 
 ## enums
 All related to enums, like HTTP Status Codes, o enums related to business logic.
