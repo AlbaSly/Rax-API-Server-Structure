@@ -1,53 +1,53 @@
+import os from "os";
 import express, { Application } from "express";
 
-import { ServerEnvironments } from "@environments/index";
+import { WebServiceConfigurations, DatabasesConfigurations } from "@configs/definitions";
 
-import { DatabasesModule } from "@core/databases";
+import { API_DATETIME_FORMAT } from "@core/constants";
 import { ApiLog, FormatUtils } from "@core/utils";
 import { RoutingManager } from "@core/routes/RoutingManager";
 
 import { SERVER_MIDDLEWARES } from "@server/middlewares";
-import { API_DATETIME_FORMAT } from "@core/constants";
+import { MainDB } from "@core/databases";
+
 
 /**
- * Main Class for running the Web Server
+ * Main Class for running the Web Server.
  */
 export class Server {
-  
-  /**Singleton*/
-  private static _instance: Server | null = null;
 
-  /**Express App */
+  /** Express App */
   private app: Application;
 
+  /** Records the timestamp when the Web Service starts to run. */
   private timeStart: number;
+
+  /** Records the timestamp when all procedures/configurations to run the Web Services are finished. */
   private timeEnd: number;
 
-  private constructor() {
+  /**
+   * Constructor for the Server class.
+   * Initializes the start time and creates the express app.
+   */
+  constructor() {
     this.timeStart = Date.now();
-
     this.createApp();
   }
 
-  static instance(): Server {
-    if (!this._instance) {
-      this._instance = new Server();
-    }
-
-    return this._instance;
-  }
-
   /**
-   * Creates the express app (Web Server), Connects to the database and executes all configs.
+   * Creates the express app (Web Server), connects to the database, and executes all configurations.
    */
   private createApp(): void {
     this.app = express();
-    ApiLog.verbose(SERVICE_NAME, 'Express app created');
+    ApiLog.verbose(SERVICE_NAME, 'Express app created.');
+
+    this.loadConfigurations();
+
     (async () => {
       try {
         await this.connectDB();
 
-        this.loadMiddlewares();
+        this.setMiddlewares();
         this.loadRoutes();
 
         this.run();
@@ -59,15 +59,29 @@ export class Server {
   }
 
   /**
-   * Establish a connection to the desired databases. 
+   * Loads all configurations, including web service and database configurations.
+   */
+  private loadConfigurations(): void {
+    ApiLog.verbose(SERVICE_NAME, 'Resolving configurations...');
+
+    WebServiceConfigurations.getInstance().loadEnvironmentVars();
+    DatabasesConfigurations.getInstance().loadEnvironmentVars();
+
+    ApiLog.info(SERVICE_NAME, 'Configurations are set.');
+  }
+
+  /**
+   * Establishes a connection to the database(s).
+   * @returns A Promise that resolves when the connection is successfully established and rejects on failure.
    */
   private connectDB(): Promise<void> {
     ApiLog.verbose(SERVICE_NAME, 'Establishing the connection to the database(s)...');
     return new Promise(async (resolve, reject) => {
       try {
-        //await DatabasesModule.Main.connect();
+        // Uncoment the line below for connecting to the Main database (check in databases/main at the core folder)
+        // await MainDB.connect();
 
-        ApiLog.verbose(SERVICE_NAME, 'Databases are ready for use.');
+        ApiLog.info(SERVICE_NAME, 'Databases are ready for use.');
         resolve();        
       } catch (e) {
         ApiLog.error(SERVICE_NAME, 'Error during databases connection', e);
@@ -77,28 +91,31 @@ export class Server {
   }
 
   /**
-   * Set all npm middlewares for the Web Server.
+   * Sets all middlewares for the Web Server's express app.
    */
-  private loadMiddlewares(): void {
+  private setMiddlewares(): void {
     this.app.use(SERVER_MIDDLEWARES);
-    ApiLog.verbose(SERVICE_NAME, 'Server middlewares set')
+    ApiLog.info(SERVICE_NAME, 'Server middlewares are set.')
   }
 
   /**
-   * Set all the routes (endpoints) for the Web Server.
+   * Sets all the routes (endpoints) for the Web Server.
    */
   private loadRoutes(): void {
     const routing = new RoutingManager(this.app);
-    ApiLog.verbose(SERVICE_NAME, 'Routes set');
+    ApiLog.info(SERVICE_NAME, 'Routes are set.');
   }
 
   /**
-   * Run the server
+   * Runs the Web Service.
+   * @returns A Promise that resolves when the server is successfully running and rejects on failure.
    */
   private run() {
-    const name = ServerEnvironments.name;
-    const port = ServerEnvironments.port;
-    const host = ServerEnvironments.host;
+    const WebServiceConfig = WebServiceConfigurations.getInstance();
+
+    const name = WebServiceConfig.name;
+    const port = WebServiceConfig.port;
+    const host = WebServiceConfig.host;
 
     return new Promise<void>((resolve, reject) => {
       try {
@@ -110,18 +127,19 @@ export class Server {
               name, 
               host, 
               port, 
-              ServerEnvironments.environment, 
-              FormatUtils.FormatDateTime(new Date(), API_DATETIME_FORMAT)
+              WebServiceConfig.environment, 
+              FormatUtils.FormatDateTime(new Date(), API_DATETIME_FORMAT),
+              os.hostname(),
             ),
           }
 
-          ApiLog.info(SERVICE_NAME, 'Server running in ' + host + ":" + port);
           console.log('\n');
-          ApiLog.info(SERVICE_NAME, 'Info:');
+          ApiLog.info(SERVICE_NAME, `Server is running in ${host}:${port}`);
+          ApiLog.verbose(SERVICE_NAME, 'Info:');
           console.table(info);
           console.log('\n');
 
-          ApiLog.verbose(SERVICE_NAME, (this.timeEnd - this.timeStart) + 'ms');
+          ApiLog.verbose(SERVICE_NAME, `Initialization completed in ${(this.timeEnd - this.timeStart)} ms.`);
 
           resolve();
         });
@@ -133,27 +151,53 @@ export class Server {
   }
 }
 
-const SERVICE_NAME: string = "WebService";
+// Service name constant
+const SERVICE_NAME: string = "My Web Service";
 
+/**
+ * ServerInfo class to represent server information for logging purposes.
+ */
 class ServerInfo {
 
+  /** Name of the web service */
   'Name': string;
+
+  /** Host on which the web service is running */
   'Host': string;
+
+  /** Port on which the web service is running */
   'Port': number;
+
+  /** Environment in which the web service is running */
   'Environment': string;
+
+  /** Start-up date and time of the web service */
   'Start-up Date': string;
 
+  /** Host device */
+  'Host Device Name': string;
+
+  /**
+   * Constructor for the ServerInfo class.
+   * @param name Name of the web service.
+   * @param host Host on which the web service is running.
+   * @param port Port on which the web service is running.
+   * @param environment Environment in which the web service is running.
+   * @param startupDate Start-up date and time of the web service.
+   */
   constructor(
     name: string,
     host: string,
     port: number,
     environment: string,
     startupDate: string,
+    hostDeviceName: string,
   ) {
     this.Name = name;
     this.Host = host;
     this.Port = port;
     this.Environment = environment;
     this["Start-up Date"] = startupDate;
+    this["Host Device Name"] = hostDeviceName;
   }
 }

@@ -1,55 +1,54 @@
 import { DataSource } from "typeorm";
+import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 
 import { ApiLog } from "@core/utils";
 
 /**
- * Class to create PostgreSQL connections.
+ * Class for managing PostgreSQL database connections using TypeORM.
  */
 export class PostgresDBConnection {
 
-  /**The name of the connection. */
+  /** The name of the database connection. */
   private readonly _connectionName: string;
 
-  /**Configuration vars. */
-  private readonly _config: DataSourceConfig;
+  /** Configuration variables for the PostgreSQL connection. */
+  private readonly _config: PostgresConnectionOptions;
 
-  /**Flag to determine if the connection is established. */
-  private _connected: boolean = false;
-
-  /**TypeORM DataSource with the connection */
+  /** TypeORM DataSource with the database connection. */
   private _dataSource: DataSource;
 
+  /** Flag to determine if the database connection is established. */
+  private _connected: boolean = false;
+
   /**
-   * 
-   * @param connectionName Name of the connection (no database name)
-   * @param config Configuration vars
+   * Constructs a new instance of the PostgresDBConnection class.
+   * @param connectionName The name of the database connection (excluding the database name).
+   * @param config Configuration variables for the PostgreSQL connection.
    */
   constructor(
     connectionName: string,
-    config: DataSourceConfig,
+    config: PostgresConnectionOptions,
   ) {
     this._connectionName = connectionName;
     this._config = config;
   }
 
   /**
-   * Make the connection.
+   * Establishes the PostgreSQL database connection.
    * @returns {Promise<void>} A promise that resolves when the database connection is successfully established.
-   * If there is any error during the connection, the promise is rejected with detailed error information.
+   * If an error occurs during the connection, the promise is rejected with detailed error information.
    */
   connect(): Promise<void> {
-
     this._dataSource = new DataSource({
-      type: 'postgres',
-      ...this._config
+      ...this._config,
     });
-    ApiLog.verbose(`DB [Postgres] "${this._connectionName}"`, 'Configuration set. Trying to connect...');
+    ApiLog.verbose(`DB [Postgres] "${this._connectionName}"`, 'Configuration set. Attempting to establish a connection...');
 
     return new Promise<void>((resolve, reject) => {
       if (this._connected) {
         return reject({
           source: `DB [Postgres] "${this._connectionName}"`,
-          msg: 'DB connection is already opened.',
+          msg: 'Database connection is already open.',
           details: null
         });
       }
@@ -58,35 +57,36 @@ export class PostgresDBConnection {
         .initialize()
         .then(() => {
           this._connected = true;
-          ApiLog.info(`DB [Postgres] "${this._connectionName}"`, 'Connection established. DataSource ready for use.');
+          ApiLog.info(`DB [Postgres] "${this._connectionName}"`, 'Connection established. DataSource is ready for use.');
           resolve();
         })
         .catch(e => {
           reject({
             source: `DB [Postgres] "${this._connectionName}"`,
-            msg: 'There\'s an error during database connection.',
+            msg: 'Error during database connection.',
             details: e,
           });
-        })
+        });
     });
   }
 
   /**
-  * Close the database connection.
+  * Closes the PostgreSQL database connection.
   * @returns {Promise<void>} A promise that resolves when the database connection is successfully closed.
-  * If there is any error during the disconnection, the promise is rejected with detailed error information.
+  * If an error occurs during the disconnection, the promise is rejected with detailed error information.
   */
   disconnect(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!this._connected) {
-        ApiLog.warning(`DB [Postgres] "${this._connectionName}"`, 'DB connection is already disconnected.');
+        ApiLog.warning(`DB [Postgres] "${this._connectionName}"`, 'Database connection is already disconnected.');
 
         return reject({
           source: `DB [Postgres] "${this._connectionName}"`,
-          msg: 'DB connection is already closed.',
+          msg: 'Database connection is already closed.',
           details: null
         });
       }
+
       this._dataSource.destroy()
         .then(() => {
           this._connected = false;
@@ -96,24 +96,26 @@ export class PostgresDBConnection {
         .catch(e => {
           reject({
             source: `DB [Postgres] "${this._connectionName}"`,
-            msg: 'There\'s an error during database connection.',
+            msg: 'Error during database disconnection.',
             details: e,
           });
         });
     });
   }
 
+  /**
+   * Gets the current status of the database connection.
+   * @returns {boolean} True if the database connection is open; otherwise, false.
+   */
+  get isConnected(): boolean {
+    return this._connected;
+  }
+
+  /**
+   * Gets the TypeORM DataSource associated with the database connection.
+   * @returns {DataSource} The TypeORM DataSource.
+   */
   get DataSource(): DataSource {
     return this._dataSource;
   }
-}
-
-interface DataSourceConfig {
-  host: string;
-  port: number;
-  username: string;
-  password?: string;
-  database?: string;
-  entities: Array<any>;
-  poolSize: number;
 }

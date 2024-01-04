@@ -27,16 +27,18 @@ In the ``.env.template`` file there are some values that you must put in the ```
 
 #### Database Configuration
 
-In this case, I'm using PostgreSQL as main database engine. So if you need to use another configurations or add more than one database, update the ```.env``` file and/or modify the ```Environments``` class _(environments/```environments.ts```)_ file based in your needs.
+In this case, I'm using PostgreSQL as main database engine. So if you need to use another configurations or add more than one database, update the ```.env``` file and/or modify the ```DatabasesConfiguration``` class _(configs/definitions/```databases.config.ts```)_ file based in your needs.
 
 For a single PostgreSQL database connection, you can use the following environment vars:
 
-- **DB_HOST**: Database address.
-- **DB_PORT**: Database port.
-- **DB_USER**: Database connection username.
-- **DB_PASSWORD**: Database connection password.
-- **DB_NAME**: Name of the desired database.
-- **DB_POOL_SIZE**: Max pool size for the database connection.
+- **MAIN_DB_HOST**: Database address.
+- **MAIN_DB_PORT**: Database port.
+- **MAIN_DB_USER**: Database connection username.
+- **MAIN_DB_PASSWORD**: Database connection password.
+- **MAIN_DB_NAME**: Name of the desired database.
+- **MAIN_DB_POOL_SIZE**: Max pool size for the database connection.
+
+To more information about their usages, check the ```README.md``` in the configs folder at the ```src``` folder of the project.
 
 #### Nodemailer Provider Configuration (optional)
 
@@ -48,12 +50,16 @@ For this, you must modify the following values in the ```.env``` file:
 - **EMAIL_SERVICE_PASSWORD**: Password generated for the account.
 - **EMAIL_PROVIDER_ADDRESS**: Usually is the same as the email account address.
 
+To more information about their usages, check the ```README.md``` in the configs folder at the ```src``` folder of the project.
+
 #### JWT Settings (optional)
 
 Related to the authentication process, you may handle the user data by JSON Web Tokens. In this backend structure, you can handle JWTs with the ```JWTService``` _(src/core/services/```jwt.service.ts```)_
 
 - **JWT_SECRET**: JWT secret password.
 - **JWT_EXPIRATION**: JWT expiration time.
+
+To more information about their usages, check the ```README.md``` in the configs folder at the ```src``` folder of the project.
 
 ### 2. Docker Compose File For Database (Optional)
 

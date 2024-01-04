@@ -39,7 +39,7 @@ export class RoutingManager {
         this.appServer.use(prefix, router);
       });
 
-      ApiLog.info('RoutingManager', 'Routes for ' + prefix + ' declaration stablished ');
+      ApiLog.verbose('RoutingManager', `Routes for ${prefix} declaration stablished.`);
     });
   }
 

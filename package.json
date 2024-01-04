@@ -4,7 +4,7 @@
   "description": "API Server Structure for Medium/Large Express-Based Projects.",
   "main": ".dist/index.js",
   "scripts": {
-    "dev": "concurrently -k \"tsc -w\" \"sleep 3 && nodemon ./dist/index.js\"",
+    "dev": "rimraf ./dist && concurrently -k \"tsc -w\" \"sleep 3 && nodemon ./dist/index.js\"",
     "w-node": "nodemon ./dist/index.js",
     "w-ts": "tsc -w",
     "build": "npx tsc",
@@ -12,7 +12,7 @@
   },
   "_moduleAliases": {
     "@core": "dist/core",
-    "@environments": "dist/environments",
+    "@configs": "dist/configs",
     "@modules": "dist/modules",
     "@server": "dist/server"
   },
@@ -60,6 +60,7 @@
     "@types/request-ip": "^0.0.41",
     "@types/uuid": "^9.0.6",
     "concurrently": "^8.2.2",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "rimraf": "^5.0.5"
   }
 }

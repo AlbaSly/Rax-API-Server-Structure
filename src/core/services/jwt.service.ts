@@ -1,9 +1,8 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-import { JWTEnvs } from "@environments/index";
+import { WebServiceConfigurations } from "@configs/definitions";
+import { JWTEnvs } from "@configs/interfaces";
 
-import { ApiLog } from "@core/utils";
-import { JWTConfig } from "@core/config";
 import { ServerException } from "@core/classes";
 
 /**
@@ -20,10 +19,9 @@ export class JWTService {
    * Initializes the JWT configuration and checks for required configuration parameters.
    * @constructor
    */
-  constructor() {
-    if (this.verifyConfiguration()) {
-      this.setConfiguration();
-    }
+  constructor(config: JWTEnvs = WebServiceConfigurations.getInstance().jwtConfig) {
+    this._config = config;
+    this.verifyConfiguration();
   }
 
   /**
@@ -48,7 +46,7 @@ export class JWTService {
    */
   verifyJWT(token: string): Promise<JwtPayload | null> {
     return new Promise((resolve, reject) => {
-      jwt.verify(token.trim(), this._config.secret!, (error, user) => {
+      jwt.verify(token.trim(), this._config.secret!, (error: unknown, user: any) => {
         if (error) return reject(error);
         resolve(user as jwt.JwtPayload);
       });
@@ -58,27 +56,13 @@ export class JWTService {
   /** 
    * Verifies that the required JWT configuration is present.
    * @private
-   * @returns {boolean} - True if the configuration is valid, otherwise throws a ServerException.
    */
-  private verifyConfiguration(): boolean {
-    if (!JWTConfig) {
-      throw new ServerException('JWTService', 'JWT configuration not specified. Verify JWT Configuration vars in your ServerEnvironment class file first!');
+  private verifyConfiguration(): void {
+    if (!this._config) {
+      throw new ServerException('JWTService', 'JWT configuration not specified. Verify JWT Configuration vars in your WebServiceConfigurations class file first!');
     }
-    if (!JWTConfig.secret) {
-      throw new ServerException('JWTService', 'JWT SECRET not specified. Verify JWT configuration vars in your ServerEnvironment class file first!');
+    if (!this._config.secret) {
+      throw new ServerException('JWTService', 'JWT SECRET not specified. Verify JWT configuration vars in your WebServiceConfigurations class file first!');
     }
-
-    return true;
-  }
-
-  /** 
-   * Sets the JWT configuration based on the provided configuration object.
-   * @private
-   * @returns {void}
-   */
-  private setConfiguration(): void {
-    this._config = {...JWTConfig}
-
-    ApiLog.info('JWTService', 'Configuration established. Ready to execute JWT operations.');
   }
 }
