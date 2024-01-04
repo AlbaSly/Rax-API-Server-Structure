@@ -19,6 +19,12 @@ I will explain all the steps you need to setup up the web server.
 
 ### 1. Environment Variables
 
+_____________
+**Important**
+
+As for other services and potential databases, you should first set up your environment variables in the ```configs``` (check ```README.md```) directory of the project, as from there, all configurations will be distributed to the various existing and yet-to-be-created services and databases.
+_____________
+
 In the ``.env.template`` file there are some values that you must put in the ```.env``` file.
 
 - **WEB_SERVICE_NAME**: Desired name for your Web Service.
