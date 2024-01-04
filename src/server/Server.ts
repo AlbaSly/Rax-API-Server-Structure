@@ -1,7 +1,7 @@
 import os from "os";
 import express, { Application } from "express";
 
-import { WebServiceConfigurations, DatabasesConfigurations } from "@configs/definitions";
+import { WebServiceConfigurations } from "@configs/definitions";
 
 import { API_DATETIME_FORMAT } from "@core/constants";
 import { ApiLog, FormatUtils } from "@core/utils";
