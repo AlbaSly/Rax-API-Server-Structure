@@ -38,3 +38,33 @@ In the case you want use another databse engine, you can follow the next article
 [https://orkhan.gitbook.io/typeorm/docs/data-source]
 
 I created a little Engine class for handling Postgres connections with TypeORM using its DataSource class _(engines/```PostgresDBConnection.ts```)_.
+
+
+## How to connect them
+
+In the ```Server.ts``` _(src/server/```Server.ts```)_, you only need to call it from the ```databases``` constant:
+
+```ts
+//Server.ts
+
+/**
+ * Establishes a connection to the database(s).
+ * @returns A Promise that resolves when the connection is successfully established and rejects on failure.
+ */
+private connectDB(): Promise<void> {
+  ApiLog.verbose(SERVICE_NAME, 'Establishing the connection to the database(s)...');
+  return new Promise(async (resolve, reject) => {
+    try {
+      const databases = await import('@core/databases');
+
+      await databases.MainDB.connect(); //Connect to your Databases from this way.
+
+      ApiLog.info(SERVICE_NAME, 'Databases are ready for use.');
+      resolve();        
+    } catch (e) {
+      ApiLog.error(SERVICE_NAME, 'Error during databases connection', e);
+      reject(e);
+    }
+  });
+}
+```
