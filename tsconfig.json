@@ -8,6 +8,7 @@
     "paths": {
       "@core/*": ["core/*"],
       "@configs/*": ["configs/*"],
+      "@databases/*": ["databases/*"],
       "@modules/*": ["modules/*"],
       "@server/*": ["server/*"],
     },

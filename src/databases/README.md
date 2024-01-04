@@ -1,5 +1,10 @@
 # Databases Folder
 
+## Important
+*As for other services and potential databases, you should first set up your environment variables in the ```configs``` directory of the project, as from there, all configurations will be distributed to the various existing and yet-to-be-created services and databases.*
+
+## Overview
+
 In this folder, you can manage all your databases connections you want.
 
 For example, as I said in previouses ```README.md``` files, I created a TypeORM based Postgres database connection, located in the ```main``` folder, following the structure below:
@@ -56,7 +61,7 @@ private connectDB(): Promise<void> {
   return new Promise(async (resolve, reject) => {
     try {
       //Dynamic import, from here you will load all your databases.
-      const databases = await import('@core/databases');
+      const databases = await import('@databases/index');
 
       await databases.MainDB.connect(); //Connect to your Databases from this way.
 
@@ -68,4 +73,14 @@ private connectDB(): Promise<void> {
     }
   });
 }
+```
+
+## Notes
+Don't forget to import/export your databases in the ```index.ts``` file to leverage the use of barrel files:
+
+```ts
+export * from "./main/main-db";
+
+// This way
+export * from "./another/another-db";
 ```

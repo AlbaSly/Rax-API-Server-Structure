@@ -1,5 +1,10 @@
 # Core Folder
 
+## Important
+*As for other services and potential databases, you should first set up your environment variables in the ```configs``` directory of the project, as from there, all configurations will be distributed to the various existing and yet-to-be-created services and databases.*
+
+## Overview
+
 This folder is intended for the server core structure to handle a REST API application.
 
 ```shell
@@ -11,13 +16,6 @@ This folder is intended for the server core structure to handle a REST API appli
     ├── constants/
     │   └── index.ts
     ├── controllers/
-    │   └── index.ts
-    ├── databases/
-    │   ├── engines/
-    │   │   ├── index.ts
-    │   │   └── PostgresDBConnection.ts
-    │   ├── main/
-    │   │   └── main-db.ts
     │   └── index.ts
     ├── enums/
     │   ├── index.ts
@@ -56,11 +54,6 @@ A folder whose function is to store constants that are used globally within the 
 
 ## controllers
 As its name implies, it is meant to organize all the general controllers of the application, as well as those related to business logic.
-
-## databases
-In this particular section, we can handle multiple databases with different database engines, having a folder called engines. Here, you can have specific classes or functions for instantiating databases.
-
-For this template, I've provided a PostgreSQL class for creating connections (```PostgresDBConnection.ts```), and an object instance as the main database, where you only need to modify the environment variables according to the ```README.md``` file _(src/configs/```README.md```)_ to have a connection to your PostgreSQL database. Additionally, it will serve as an example to create more instances with different connections.
 
 ## enums
 All related to enums, like HTTP Status Codes, o enums related to business logic.
