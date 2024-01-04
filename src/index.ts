@@ -1,20 +1,6 @@
 import 'module-alias/register';
 
-import { Server } from "./server/Server";
+import Bootstrap from './Bootstrap';
 
-console.log(`
-
-,-----.              ,------.                         ,--.     
-|  |) /_,--. ,--.    |  .--. ' ,--,--.,--.  ,--.,---. |  |     
-|  .-.  \\  '  /     |  '--'.'' ,-.  | \\  \`  /| .-. :|  |     
-|  '--' / \\   '      |  |\\  \\ \\ '-'  | /  /.  \\|   --.|  |.--. 
-\`------'.-'  /       \`--' '--' \`--\`--''--'  '--'\`----'\`--''--'  (2024)
-        \`---'                                                  
-Visit my github profile: https://github.com/AlbaSly
-
-Starting the web service...
-
-`);
-
-/**Run the app */
-const bootstrap = new Server();
+/**Bootstrap for the application */
+const bootstrap = Bootstrap.getInstance();

@@ -55,6 +55,7 @@ private connectDB(): Promise<void> {
   ApiLog.verbose(SERVICE_NAME, 'Establishing the connection to the database(s)...');
   return new Promise(async (resolve, reject) => {
     try {
+      //Dynamic import, from here you will load all your databases.
       const databases = await import('@core/databases');
 
       await databases.MainDB.connect(); //Connect to your Databases from this way.
