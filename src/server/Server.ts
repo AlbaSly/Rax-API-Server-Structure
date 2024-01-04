@@ -64,7 +64,7 @@ export class Server {
     return new Promise(async (resolve, reject) => {
       try {
         //Dynamic import, from here you will load all your databases.
-        const databases = await import('@core/databases');
+        const databases = await import('@databases/index');
         // Uncomment the line below for connecting to the Main database (check in databases/main at the core folder)
         // await databases.MainDB.connect(); 
 
