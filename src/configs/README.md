@@ -124,7 +124,7 @@ private getConfigurations() {
       configurations.DatabasesConfigurations.getInstance().loadEnvironmentVars();
 
       //Your own configuration class
-      MyConfigurations.getInstance().loadEnvironmentVars();
+      configurations.MyConfigurations.getInstance().loadEnvironmentVars();
 
       ApiLog.info('Bootstrap', 'Configurations are set.\n');
       resolve();
